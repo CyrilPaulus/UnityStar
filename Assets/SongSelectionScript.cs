@@ -18,6 +18,12 @@ public class SongSelectionScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		//HardCode for debug only
+		WorkingDir = @"E:\UltraStar\songs\";
+		if(!Directory.Exists(WorkingDir))
+			WorkingDir = Application.dataPath + "/../songs/";
+
+
         LoadSongs();
         ChangeSong();
 	}

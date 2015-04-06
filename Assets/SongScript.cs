@@ -43,19 +43,19 @@ public class SongScript : ITimeSource
         if(!string.IsNullOrEmpty(ApplicationSettings.CurrentSongFile))
             Song = new SongData(ApplicationSettings.CurrentSongFile);
         else
-            Song = new SongData(@"E:\UltraStar\songs\Acdc - Highway To Hell\Acdc - Highway To Hell.txt");
+			Song = new SongData(@"E:\UltraStar\songs\Gaetan Roussel - Help myself\Gaetan Roussel - Help myself.txt");
 
         VideoPlayer.SetFile(Song.GetVideoPath());
         VideoPlayer.VideoGap = Song.VideoGap;
         VideoPlayer.Reset();
                 
-        audio.clip = GetAudioClipFromMP3(Song.GetMP3Path());        
+        GetComponent<AudioSource>().clip = GetAudioClipFromMP3(Song.GetMP3Path());        
 
-        audio.Play();
+        GetComponent<AudioSource>().Play();
         VideoPlayer.Play();
 
         _noteSprites = new List<GameObject>();
-        Slider.maxValue = audio.clip.length / 2;
+        Slider.maxValue = GetComponent<AudioSource>().clip.length / 2;
         Slider.minValue = 0;
                         
         _singNotes = new List<SingNoteInfo>();
@@ -63,8 +63,8 @@ public class SongScript : ITimeSource
 
     public override double GetTime()
     {
-        var freq = audio.clip.frequency;
-        var time = audio.timeSamples / (float)audio.clip.frequency;
+        var freq = GetComponent<AudioSource>().clip.frequency;
+        var time = GetComponent<AudioSource>().timeSamples / (float)GetComponent<AudioSource>().clip.frequency;
         return time;
     }
 

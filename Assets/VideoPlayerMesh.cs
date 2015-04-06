@@ -52,7 +52,7 @@ public class VideoPlayerMesh : MonoBehaviour {
         _buffer = new byte[_wrapper.Width * _wrapper.Height * 3];
         _texture = new Texture2D(_wrapper.Width, _wrapper.Height, TextureFormat.RGB24, false);
 
-        renderer.material.mainTexture = _texture;
+        GetComponent<Renderer>().material.mainTexture = _texture;
         var ri = GetComponent<RawImage>();
         if (ri != null)
         {

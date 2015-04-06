@@ -3,6 +3,8 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System.IO;
+using System;
 
 public class FrequencyExtractor : MonoBehaviour {
     private const float BaseToneFreq = 65.4064f;
@@ -22,15 +24,14 @@ public class FrequencyExtractor : MonoBehaviour {
     public int ToneAbs { get; private set; } //Full tone 0 - HalfTonesCount - 1
     
     private MicControlC _micControl;
-
-
+	
 	// Use this for initialization
 	void Start () {
         _micControl = GetComponent<MicControlC>();        
         
         
         _analysisData = new float[SampleCount];
-        audio.mute = true;
+        GetComponent<AudioSource>().mute = true;		
 	}
 	
 	// Update is called once per frame
@@ -43,11 +44,10 @@ public class FrequencyExtractor : MonoBehaviour {
 
         var source = GetComponent<AudioSource>();
         source.GetOutputData(_analysisData, 0);
-        //audio.GetOutputData(_analysisData, 0);
-
+        		
 
         //Get max vol on first 1024 ech
-        var vol = _analysisData.Take(1024).Select(x => (x + 1) / 2).Max();
+        var vol = _analysisData.Take(1024).Select(x => Math.Abs(x)).Max();
 
         if (vol > MinVol)
         {

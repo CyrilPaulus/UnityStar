@@ -27,7 +27,7 @@ public class VolumeBarC : Editor {
 			EditorGUI.BeginChangeCheck();
 			micCon.ableToHearMic = EditorGUILayout.Toggle (new GUIContent("Audio Mute", "Select whether you can hear yourself talking or not"), micCon.ableToHearMic);
 			if (EditorGUI.EndChangeCheck()) {
-				micCon.audio.mute = micCon.ableToHearMic;
+				micCon.GetComponent<AudioSource>().mute = micCon.ableToHearMic;
 			}
 			
 			micCon.sensitivity = EditorGUILayout.FloatField(new GUIContent("Mic Sensitivity", "The sensitivity that the audio is recieved from the microphone"), micCon.sensitivity);

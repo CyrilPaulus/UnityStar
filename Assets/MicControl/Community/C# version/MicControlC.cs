@@ -34,8 +34,8 @@ public class MicControlC : MonoBehaviour {
 	private bool focused = true;
 	
 	void Start() {
-		audio.loop = true; // Set the AudioClip to loop
-		audio.mute = false; // Mute the sound, we don't want the player to hear it
+		GetComponent<AudioSource>().loop = true; // Set the AudioClip to loop
+		GetComponent<AudioSource>().mute = false; // Mute the sound, we don't want the player to hear it
 		selectedDevice = Microphone.devices[0].ToString();
 		micSelected = true;
 		GetMicCaps();
@@ -76,12 +76,12 @@ public class MicControlC : MonoBehaviour {
 			maxFreq = 44100;
 	}
 	public void StartMicrophone () {
-		audio.clip = Microphone.Start(selectedDevice, true, 10, maxFreq);//Starts recording
+		GetComponent<AudioSource>().clip = Microphone.Start(selectedDevice, true, 10, maxFreq);//Starts recording
 		while (!(Microphone.GetPosition(selectedDevice) > 0)){} // Wait until the recording has started
-		audio.Play(); // Play the audio source!
+		GetComponent<AudioSource>().Play(); // Play the audio source!
 	}
 	public void StopMicrophone () {
-		audio.Stop();//Stops the audio
+		GetComponent<AudioSource>().Stop();//Stops the audio
 		Microphone.End(selectedDevice);//Stops the recording of the device
 	}    
 	void Update() {
@@ -93,11 +93,11 @@ public class MicControlC : MonoBehaviour {
 		}
 		
 		if(virual3D){
-			listenerDistance = Vector3.Distance(transform.position, audio.transform.position);
-			audio.volume = (sourceVolume / 100 / (listenerDistance * volumeFallOff));
+			listenerDistance = Vector3.Distance(transform.position, GetComponent<AudioSource>().transform.position);
+			GetComponent<AudioSource>().volume = (sourceVolume / 100 / (listenerDistance * volumeFallOff));
 		}
 		else {
-			audio.volume = (sourceVolume / 100);
+			GetComponent<AudioSource>().volume = (sourceVolume / 100);
 			loudness = GetAveragedVolume() * sensitivity * (sourceVolume / 10);
 		}
 		//Hold To Speak!!
@@ -138,7 +138,7 @@ public class MicControlC : MonoBehaviour {
 	float GetAveragedVolume() {
 		float[] data = new float[amountSamples];
 		float a = 0;
-		audio.GetOutputData(data,0);
+		GetComponent<AudioSource>().GetOutputData(data,0);
 		foreach(float s in data) {
 			a += Mathf.Abs(s);
 		}
