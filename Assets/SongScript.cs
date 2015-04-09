@@ -28,10 +28,13 @@ public class SongScript : ITimeSource
     public Text Text;
     public Text Text2;
     public Text TimeText;
+    public Text Score;
     private Note curNote;
     private Line _curLine;
     private Line _nextLine;
     private List<GameObject> _noteSprites;
+    private int _score = 0;
+    private AudioWrapper _wrapper;
 
     public Slider Slider;
     public FrequencyExtractor FrequencyExtractor;
@@ -124,8 +127,10 @@ public class SongScript : ITimeSource
     {
         if (FrequencyExtractor.HasTone && _curLine!= null && _curLine.GetCurNote(bpm) != null)
         {
+            var curNote = _curLine.GetCurNote(bpm);
 
-            var curTone = _curLine.GetCurNote(bpm).NoteCode;
+
+            var curTone = curNote.NoteCode;
 
             var tone = FrequencyExtractor.ToneAbs;
             //Difficulty and stuff
@@ -139,8 +144,12 @@ public class SongScript : ITimeSource
             var range = 2 - (int)this.CurrentDifficulty;
 
             //We correctly sung this tone !!! 
-            if (Math.Abs(tone - curTone) < range)
+            if (Math.Abs(tone - curTone) < range) {
                 tone = curTone;
+
+                _score += (ApplicationSettings.MAX_SONG_SCORE / _curLine.ScoreValue) * curNote.ScoreValue;
+                Score.text = string.Format("{0:000000}", _score);
+            }
 
             int baseTone = _curLine.Notes.Select(n => n.NoteCode).Min();
 
@@ -235,25 +244,19 @@ public class SongScript : ITimeSource
     private AudioClip GetAudioClipFromMP3(string mp3)
     {
         var cur = DateTime.Now;
-        var wrapper = new AudioWrapper();
-        var stream = new MemoryStream();
-        wrapper.Decode(mp3, stream);
-                
+        _wrapper = new AudioWrapper();
 
-        byte[] rawAudioData = stream.ToArray();
-        float[] audioData = new float[rawAudioData.Length / 2];
+        _wrapper.Open(mp3);               
 
-        for (int i = 0; i < audioData.Length; i++)
-        {
-            audioData[i] = (float)(BitConverter.ToInt16(rawAudioData, i * 2)) / 32768.0f;
-        }
 
-        var rtn = AudioClip.Create(mp3, audioData.Length, 2, wrapper.Frequency, false, false);
-        rtn.SetData(audioData, 0);
-        var dur = DateTime.Now - cur;
-        Debug.Log(dur.TotalSeconds);
+        var rtn = AudioClip.Create(mp3, (int)_wrapper.Samples, 2, _wrapper.Frequency, false, OnAudioRead);
         return rtn;
 
+    }
+
+    void OnAudioRead(float[] data)
+    {
+        _wrapper.Read(data);
     }
 
 }
@@ -265,3 +268,4 @@ class SingNoteInfo
     public GameObject NoteSprite { get; set; }
     public bool Breaked { get; set; }
 }
+

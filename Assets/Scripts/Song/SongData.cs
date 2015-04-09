@@ -203,6 +203,18 @@ public class Note : ISongData {
 
     public NoteType Type {get; set;}
 
+    public int ScoreValue {
+        get {
+            if (Type == NoteType.FreeStyle)
+                    return 0;
+            else if (Type == NoteType.Regular)
+                    return 1;
+            else if (Type == NoteType.Golden)
+                    return 2;
+            return 0;
+        }
+    }
+
     public bool Word {get; set;}
 
     //When does this appears
@@ -254,5 +266,12 @@ public class Line {
     internal Note GetCurNote(double bpm)
     {
         return Notes.FirstOrDefault(n => n.BeatNumber <= bpm && bpm <= n.BeatNumber + n.BeatLength);
+    }
+
+    public int ScoreValue {
+        get 
+        {
+            return Notes.Sum(x => x.BeatLength * x.ScoreValue);
+        }
     }
 }
