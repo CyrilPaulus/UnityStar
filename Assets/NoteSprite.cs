@@ -1,45 +1,49 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
 
-public class NoteSprite : MonoBehaviour {
-    
-    private float _width = 1;
-
-    public float Width
+namespace UnityStar.Assets
+{
+    public class NoteSprite : MonoBehaviour
     {
-        get
+        private float _width = 1;
+
+        public float Width
         {
-            return _width;
+            get
+            {
+                return _width;
+            }
+
+            set
+            {
+                _width = value;
+                //0.68 because the main bar is
+                var val = (value - 0.32f);
+                if (val < 0)
+                    val = 0;
+
+                UpdateWidth(val / 0.16f);
+            }
         }
 
-        set
+        // Use this for initialization
+        private void Start()
         {
-            _width = value;
-            //0.68 because the main bar is
-            var val = (value - 0.32f);
-            if (val < 0)
-                val = 0;
-
-            UpdateWidth(val/0.16f);
         }
-    }
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+        // Update is called once per frame
+        private void Update()
+        {
+        }
 
-    private void UpdateWidth(float width) {
-        var center = transform.GetChild(1);
-        center.transform.localScale = new Vector3(width, 1, 1);
-        center.transform.localPosition =new Vector3(0.16f, 0, 0);
+        private void UpdateWidth(float width)
+        {
+            var center = transform.GetChild(1);
+            center.transform.localScale = new Vector3(width, 1, 1);
+            center.transform.localPosition = new Vector3(0.16f, 0, 0);
 
-        var end = transform.GetChild(2);
-        end.transform.localPosition = new Vector3(0.16f + 0.16f * width, 0, 0);
+            var end = transform.GetChild(2);
+            end.transform.localPosition = new Vector3(0.16f + 0.16f * width, 0, 0);
+        }
     }
 }
