@@ -59,6 +59,7 @@ namespace UnityStar.Assets.Song
         {
             foreach (var dir in Directory.GetDirectories(WorkingDir))
             {
+                var dirName = Path.GetFileName(dir);
                 foreach (var file in Directory.GetFiles(dir))
                 {
                     if (!file.EndsWith(".txt"))
@@ -66,7 +67,10 @@ namespace UnityStar.Assets.Song
                     try
                     {
                         var sg = new SongData(file);
-                        _songs.Add(sg);
+                        if (File.Exists(sg.GetMP3Path()))
+                            _songs.Add(sg);
+                        else
+                            Debug.LogWarning(string.Format("File {0} is an invalid song file", file));
                     }
                     catch
                     {
@@ -92,8 +96,11 @@ namespace UnityStar.Assets.Song
         {
             var curSong = _songs[_curSongIndex];
             SongInfo.SetSong(curSong, _curSongIndex);
-            Mesh.SetFile(curSong.GetVideoPath());
-            Mesh.Play();
+            if (!string.IsNullOrEmpty(curSong.Video))
+            {
+                Mesh.SetFile(curSong.GetVideoPath());
+                Mesh.Play();
+            }
             GetComponent<AudioSource>().clip = GetAudioClipFromMP3(curSong.GetMP3Path());
             GetComponent<AudioSource>().Play();
         }
@@ -125,13 +132,14 @@ namespace UnityStar.Assets.Song
             _wrapper = new AudioWrapper();
             _wrapper.Open(mp3);
 
-            var rtn = AudioClip.Create(mp3, (int)_wrapper.Samples, 2, _wrapper.Frequency, false, OnAudioRead);
+            var rtn = AudioClip.Create(mp3, (int)_wrapper.Samples, 2, _wrapper.Frequency, true, OnAudioRead);
             return rtn;
         }
 
         private void OnAudioRead(float[] data)
         {
             _wrapper.Read(data);
+            Debug.Log("Reading");
         }
     }
 }
